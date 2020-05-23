@@ -107,13 +107,15 @@ function search {
 function new {
     local title=$1
     local tags=$2
-    local date=$(date +%Y%m%d%H%M%S)
+    local date=$(date +%Y-%m-%d)
+    local timestamp=$(date +%Y%m%d%H%M%S)
     local tmpfile=$(mktemp)
-    local filename="$date.md"
+    local filename="$timestamp.md"
     local zettel="$ZETTELKASTEN_PATH/$filename"
 
     echo "---" > $tmpfile
     echo "title: $title" >> $tmpfile
+    echo "date: $date" >> $tmpfile
 
     if [ ! -z "$tags" ]; then
         echo "tags:" >> $tmpfile
