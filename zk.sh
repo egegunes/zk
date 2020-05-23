@@ -2,18 +2,24 @@
 
 set -eo pipefail
 
-ZETTELKASTEN_PATH=/home/egegunes/zettelkasten
-
 function usage {
-    cat << EOF
-zk: CLI for your zettelkasten
-    help: Print this message
-    new: Create new zettel
-    search: Search your zettelkasten
-    link: Link zettels
-    push: Push changes
-    pull: Pull changes
-EOF
+    echo "Usage: zk {new,search,link,pull,push,help}"
+    echo ""
+    echo "Create zettels"
+    echo "  zk new TITLE [tag1,tag2]"
+    echo ""
+    echo "Search your kasten"
+    echo "  zk search [tag]"
+    echo ""
+    echo "Link zettels"
+    echo "  zk link [src] [dst]"
+    echo ""
+    echo "Push changes"
+    echo "  zk push"
+    echo ""
+    echo "Pull changes"
+    echo "  zk pull"
+    echo ""
 }
 
 function commit {
@@ -133,10 +139,18 @@ function new {
 
 function main {
     local cmd=$1
+
+    if [ $cmd == "help" ]; then
+        usage
+        exit 0
+    fi
+
+    if [ -z $ZETTELKASTEN_PATH ]; then
+        echo "Set ZETTELKASTEN_PATH environment variable"
+        exit 1
+    fi
+
     case $cmd in
-        "help")
-            usage
-            ;;
         "new")
             new $2 $3
             ;;
