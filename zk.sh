@@ -88,13 +88,13 @@ function search {
     if [ ! -z "$tag" ]; then
         files=$(grep -l "$tag" $ZETTELKASTEN_PATH/*.md)
     else
-        files=$(ls -l $ZETTELKASTEN_PATH/*.md)
+        files=$(ls -1 $ZETTELKASTEN_PATH/*.md)
     fi
 
-    files=$(echo $files | xargs -r grep "title:" --with-filename | awk 'BEGIN {FS="/"};{print $5}')
-    local filename=$(echo $files | fzf -d ":" --preview "cat $ZETTELKASTEN_PATH/{1}" --preview-window=up:40%)
+    files=$(printf "$files" | xargs -r grep "title:" --with-filename | awk 'BEGIN {FS="/"};{print $5}')
+    local filename=$(printf "$files" | fzf -d ":" --preview "cat $ZETTELKASTEN_PATH/{1}" --preview-window=up:40%)
 
-    if [ -z "$filename"]; then
+    if [ -z "$filename" ]; then
         exit 1
     fi
 
