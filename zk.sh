@@ -28,7 +28,8 @@ function commit {
 
     cd $ZETTELKASTEN_PATH &>/dev/null
 
-    git commit $file -m "$mode $file" &>/dev/null
+    git add $file
+    git commit -m "$mode $file" &>/dev/null
 
     cd - &>/dev/null
 }
