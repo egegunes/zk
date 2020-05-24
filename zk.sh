@@ -28,7 +28,7 @@ function commit {
 
     cd $ZETTELKASTEN_PATH &>/dev/null
 
-    git add $file
+    git add $file README.md
     git commit -m "$mode $file" &>/dev/null
 
     cd - &>/dev/null
@@ -48,6 +48,21 @@ function pull {
     git pull origin master
 
     cd - &>/dev/null
+}
+
+function index {
+    local index_file=$ZETTELKASTEN_PATH/README.md
+    local tags=$(awk '$1 == "-" {print $2}' $ZETTELKASTEN_PATH/*.md | sort | uniq)
+    local files
+
+    echo "# Index" > $index_file
+
+    while IFS=$'\n' read -ra tag; do
+        for i in "${tag[@]}"; do
+            printf "\n## $i\n\n" >> $index_file
+            grep "$i" -l $ZETTELKASTEN_PATH/*.md | xargs -r grep "title:" --with-filename | awk 'BEGIN {FS="/"};{print $5}' | awk 'BEGIN {FS=":"};{print "* ["$3"]("$1")"}' | sed 's/\[ /\[/g' >> $index_file
+        done
+    done <<< "$tags"
 }
 
 function link {
@@ -77,6 +92,7 @@ function link {
     echo "* [$dst_title]($dst)" >> $ZETTELKASTEN_PATH/$src
     echo "* [$src_title]($src)" >> $ZETTELKASTEN_PATH/$dst
 
+    index
     commit "link" $ZETTELKASTEN_PATH/$src
     commit "link" $ZETTELKASTEN_PATH/$dst
 }
@@ -102,6 +118,7 @@ function search {
 
     $EDITOR "$ZETTELKASTEN_PATH/$filename"
 
+    index
     commit "edit" $filename
 }
 
@@ -137,6 +154,7 @@ function new {
     fi
 
     cp $tmpfile $zettel
+    index
     commit "add" $filename
 }
 
