@@ -106,11 +106,11 @@ function search {
 }
 
 function new {
-    local title=$1
-    local tags=$2
+    local title="$1"
+    local tags="$2"
     local date=$(date +%Y-%m-%d)
     local timestamp=$(date +%Y%m%d%H%M%S)
-    local tmpfile=$(mktemp)
+    local tmpfile=$(mktemp --suffix=".md")
     local filename="$timestamp.md"
     local zettel="$ZETTELKASTEN_PATH/$filename"
 
@@ -141,7 +141,7 @@ function new {
 }
 
 function main {
-    local cmd=$1
+    local cmd="$1"
 
     if [ $cmd == "help" ]; then
         usage
@@ -155,13 +155,13 @@ function main {
 
     case $cmd in
         "new")
-            new $2 $3
+            new "$2" "$3"
             ;;
         "search")
-            search $2
+            search "$2"
             ;;
         "link")
-            link $2 $3
+            link "$2" "$3"
             ;;
         "push")
             push
@@ -175,4 +175,4 @@ function main {
     esac
 }
 
-main $@
+main "$@"
